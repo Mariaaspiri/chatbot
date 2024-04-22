@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot</title>
+    <style>
+        #chat-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 300px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #messages {
+            height: 150px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        #userInput {
+            width: calc(100% - 20px);
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px 0;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h4>Chat with Us!</h4>
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+    function sendMessage() {
+        var input = document.getElementById('userInput');
+        var message = input.value;
+        input.value = ''; // Clear the input field after sending
+
+        var messagesContainer = document.getElementById('messages');
+        messagesContainer.innerHTML += `<div>You: ${message}</div>`; // Display user message
+
+        fetch('http://localhost:3000/message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            messagesContainer.innerHTML += `<div>Chatbot: ${data.reply}</div>`; // Display chatbot response
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    </script>
+</body>
+</html>
